@@ -48,8 +48,8 @@
     "agents": {
       "review": {
         "provider": "openai",
-        "model": "gpt-5.6-sol",
-        "effort": "high",
+        "model": "gpt-5.6-luna",
+        "effort": "max",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -60,14 +60,14 @@
         "workspace": {
           "enabled": true,
           "allowWrites": false,
-          "model": "gpt-5.6-sol",
-          "effort": "high"
+          "model": "gpt-5.6-luna",
+          "effort": "max"
         }
       },
       "audit": {
         "provider": "openai",
-        "model": "gpt-5.6-sol",
-        "effort": "high",
+        "model": "gpt-5.6-luna",
+        "effort": "max",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -78,14 +78,14 @@
         "workspace": {
           "enabled": true,
           "allowWrites": true,
-          "model": "gpt-5.6-sol",
-          "effort": "high"
+          "model": "gpt-5.6-luna",
+          "effort": "max"
         }
       },
       "issue": {
         "provider": "openai",
-        "model": "gpt-5.6-terra",
-        "effort": "medium",
+        "model": "gpt-5.6-luna",
+        "effort": "max",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -96,14 +96,14 @@
         "workspace": {
           "enabled": false,
           "allowWrites": false,
-          "model": "gpt-5.6-sol",
-          "effort": "low"
+          "model": "gpt-5.6-luna",
+          "effort": "max"
         }
       },
       "fix": {
         "provider": "openai",
-        "model": "gpt-5.6-terra",
-        "effort": "high",
+        "model": "gpt-5.6-luna",
+        "effort": "max",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -114,8 +114,8 @@
         "workspace": {
           "enabled": true,
           "allowWrites": true,
-          "model": "gpt-5.6-terra",
-          "effort": "high"
+          "model": "gpt-5.6-luna",
+          "effort": "max"
         }
       }
     }
