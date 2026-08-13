@@ -293,7 +293,8 @@
       "maximumPatchBytes": 524288,
       "maximumFileBytes": 262144,
       "validationCommands": [
-        "git diff --check"
+        "git diff --check",
+        "node --test test/*.test.mjs"
       ]
     }
   },
