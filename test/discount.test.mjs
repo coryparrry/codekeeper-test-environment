@@ -21,6 +21,12 @@ test("discountedTotal accepts a full discount", () => {
   assert.equal(discountedTotal(19.99, 100), 0);
 });
 
+test("discountedTotal normalizes negative zero", () => {
+  const result = discountedTotal(-0, 25);
+  assert.equal(Object.is(result, 0), true);
+  assert.equal(Object.is(result, -0), false);
+});
+
 test("discountedTotal rejects an invalid discount", () => {
   assert.throws(() => discountedTotal(19.99, 101), TypeError);
 });
