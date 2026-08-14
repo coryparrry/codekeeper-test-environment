@@ -1,6 +1,17 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { discountedTotal } from "../src/discount.mjs";
+import { discountedTotal, isValidDiscountPercent } from "../src/discount.mjs";
+
+test("isValidDiscountPercent accepts the inclusive boundaries", () => {
+  assert.equal(isValidDiscountPercent(0), true);
+  assert.equal(isValidDiscountPercent(100), true);
+});
+
+test("isValidDiscountPercent rejects values outside the finite range", () => {
+  assert.equal(isValidDiscountPercent(-1), false);
+  assert.equal(isValidDiscountPercent(101), false);
+  assert.equal(isValidDiscountPercent(Number.NaN), false);
+});
 
 test("discountedTotal calculates a deterministic percentage discount", () => {
   assert.equal(discountedTotal(19.99, 25), 14.99);
