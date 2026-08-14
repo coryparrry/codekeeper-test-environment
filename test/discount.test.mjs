@@ -6,6 +6,10 @@ test("discountedTotal calculates a deterministic percentage discount", () => {
   assert.equal(discountedTotal(19.99, 25), 14.99);
 });
 
+test("discountedTotal accepts a full discount", () => {
+  assert.equal(discountedTotal(19.99, 100), 0);
+});
+
 test("discountedTotal rejects an invalid discount", () => {
   assert.throws(() => discountedTotal(19.99, 101), TypeError);
 });
