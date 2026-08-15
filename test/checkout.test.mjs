@@ -8,12 +8,20 @@ test("checkout totals ordinary discounted lines without mutating input", () => {
   const result = checkoutSummary(lines);
 
   assert.deepEqual(result, {
-    lineTotals: [{ sku: "standard", total: 30 }],
+    lineTotals: [
+      {
+        sku: "standard",
+        quantity: 2,
+        taxCategory: "standard",
+        total: 30,
+      },
+    ],
     subtotal: 30,
     appliedCoupon: 0,
+    couponReason: "no-eligible-lines",
     taxableSubtotal: 30,
     tax: 0,
-    total: 30
+    total: 30,
   });
   assert.deepEqual(lines, snapshot);
 });
@@ -48,6 +56,35 @@ test("a coupon is capped at the discounted subtotal", () => {
 
   assert.equal(result.appliedCoupon, 4);
   assert.equal(result.total, 0);
+});
+
+test("checkout supports sku-restricted coupons and mixed tax categories", () => {
+  const result = checkoutSummary(
+    [
+      {
+        sku: "book",
+        unitPrice: 10,
+        quantity: 1,
+        discountPercent: 0,
+        taxCategory: "reduced",
+      },
+      {
+        sku: "gift-card",
+        unitPrice: 20,
+        quantity: 1,
+        discountPercent: 0,
+        taxCategory: "exempt",
+      },
+    ],
+    {
+      coupon: { amount: 5, eligibleSkus: ["book"] },
+      taxPercent: 20,
+    },
+  );
+
+  assert.equal(result.appliedCoupon, 5);
+  assert.equal(result.couponReason, "applied");
+  assert.equal(result.total, 26);
 });
 
 test("checkout rejects malformed lines and rates", () => {
