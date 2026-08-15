@@ -62,13 +62,13 @@ jobs:
     name: Codekeeper pinned tooling bootstrap
     runs-on: ${{ vars.CODEKEEPER_RUNNER || 'ubuntu-latest' }}
     steps:
-      - uses: coryparry/Codekeeper/tools/codekeeper@fd8bf400d6b788505e405c4f8cd8f92e0b5ee7ee
+      - uses: coryparry/Codekeeper/tools/codekeeper@ba6f72229f168aec8accea5a9c9c6de6652b1465
         with:
           artifact-name: codekeeper-tooling-${{ github.run_id }}
   review:
     needs: [intent, bootstrap]
     if: needs.intent.outputs.route == 'true' && needs.bootstrap.result == 'success'
-    uses: coryparry/Codekeeper/.github/workflows/codekeeper-review.yml@fd8bf400d6b788505e405c4f8cd8f92e0b5ee7ee
+    uses: coryparry/Codekeeper/.github/workflows/codekeeper-review.yml@ba6f72229f168aec8accea5a9c9c6de6652b1465
     with:
       enabled: ${{ vars.CODEKEEPER_ENABLED == 'true' }}
       runner: ${{ vars.CODEKEEPER_RUNNER || 'ubuntu-latest' }}
