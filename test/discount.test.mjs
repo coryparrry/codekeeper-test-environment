@@ -27,6 +27,12 @@ test("discountedTotal normalizes negative zero", () => {
   assert.equal(Object.is(result, -0), false);
 });
 
+test("discountedTotal keeps finite large prices finite", () => {
+  const result = discountedTotal(Number.MAX_VALUE, 1);
+  assert.equal(result, Number.MAX_VALUE * 0.99);
+  assert.equal(Number.isFinite(result), true);
+});
+
 test("discountedTotal rejects an invalid discount", () => {
   assert.throws(() => discountedTotal(19.99, 101), TypeError);
 });
