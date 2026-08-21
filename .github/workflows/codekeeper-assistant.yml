@@ -91,8 +91,8 @@ jobs:
     if: needs.intent.outputs.route == 'true'
     uses: ./.github/workflows/codekeeper-runtime-assistant.yml
     with:
-      package_version: "0.3.2"
-      package_integrity: "sha512-yDNkKAn9uJVhIK7TGs+mc8Iz8/ofEFvbuBGtJZCOqdDyubLdTFVEfkAF2OyPgl/LIHfYnO82a7PIotnqd/Z+6A=="
+      package_version: "0.3.3"
+      package_integrity: "sha512-adSTBbT2xn8uQUcvQz7i+CQ106RIU1gRRrBhf5wLuIArqs+E1YqsOcM5UkVt6b9SfNN5mfbIrxa3drfbwy+1mQ=="
       enabled: ${{ vars.CODEKEEPER_ENABLED == 'true' }}
       owner_requests: true
       installed_modes: review,maintain
