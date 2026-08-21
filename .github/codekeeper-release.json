@@ -2,17 +2,17 @@
   "version": 2,
   "package": {
     "name": "@coryparry/codekeeper",
-    "version": "0.3.2",
-    "integrity": "sha512-yDNkKAn9uJVhIK7TGs+mc8Iz8/ofEFvbuBGtJZCOqdDyubLdTFVEfkAF2OyPgl/LIHfYnO82a7PIotnqd/Z+6A=="
+    "version": "0.3.3",
+    "integrity": "sha512-adSTBbT2xn8uQUcvQz7i+CQ106RIU1gRRrBhf5wLuIArqs+E1YqsOcM5UkVt6b9SfNN5mfbIrxa3drfbwy+1mQ=="
   },
   "source": {
     "repository": "coryparrry/Codekeeper",
     "commit": "87b4f9813c1a16dee6cbca020181cc72af5e21d5"
   },
   "managedFiles": {
-    ".github/workflows/codekeeper-assistant.yml": "b9d48754361ac4544178f0171a0775275cb3b9175e2c49937eb16a0a2b2e9066",
-    ".github/workflows/codekeeper-review.yml": "39559d0663a6e1a72d4128636c6bc0e44c379db1ce8e80fe035a13be15c087ec",
-    ".github/workflows/codekeeper-maintain.yml": "696ad975dbcdc9cb8b716b3b6eb534bc558a3d643f9d9ae968fd74179353f676",
+    ".github/workflows/codekeeper-assistant.yml": "536165b1f5387f3c60c22fb1b9f7a993be1825f7219019d5700cf17fc87cbe8a",
+    ".github/workflows/codekeeper-review.yml": "2d55ff735e6ce23fe51f2d1ee911847221d3feb786601d506214de2670f80664",
+    ".github/workflows/codekeeper-maintain.yml": "057bb1902f3b0331c4ab23570ecd0a24d173e42692b1e527c02381c161075506",
     ".github/codekeeper/actions/acquire-package/action.yml": "62b1451952adf82418e54a93cbe457314dfa1a228bc97eceb12de2a2d3fc14c6",
     ".github/workflows/codekeeper-runtime-assistant.yml": "121b563f6aecd08f9371a8a1eb419071da42e06d0e9185d6708fea3431b55388",
     ".github/workflows/codekeeper-runtime-review.yml": "4d82df06279921e7f6be17c9dc59ec8e1ce77c5e803195eb33cb54a46631cd33",
