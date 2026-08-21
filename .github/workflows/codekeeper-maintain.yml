@@ -23,8 +23,8 @@ jobs:
   maintain:
     uses: ./.github/workflows/codekeeper-runtime-maintain.yml
     with:
-      package_version: "0.3.3"
-      package_integrity: "sha512-adSTBbT2xn8uQUcvQz7i+CQ106RIU1gRRrBhf5wLuIArqs+E1YqsOcM5UkVt6b9SfNN5mfbIrxa3drfbwy+1mQ=="
+      package_version: "0.3.4"
+      package_integrity: "sha512-aDJL99HhBXYzdNH8fbB9oiv37BpEQPgc5k5ispXXvNGoN0L2D7OrfO52Jw7xwTCgnJdDp6xWMyMuV4ZkghwqEw=="
       enabled: ${{ vars.CODEKEEPER_ENABLED == 'true' }}
       # Scheduled runs are report-only. A manual dispatch can explicitly choose dry or live mode.
       dry_run: ${{ github.event_name == 'schedule' || inputs.dry_run }}
