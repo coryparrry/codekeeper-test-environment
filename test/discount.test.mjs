@@ -13,6 +13,10 @@ test("isValidDiscountPercent rejects values outside the finite range", () => {
   assert.equal(isValidDiscountPercent(Number.NaN), false);
 });
 
+test("discountedTotal leaves the price unchanged for a zero-percent discount", () => {
+  assert.equal(discountedTotal(19.99, 0), 19.99);
+});
+
 test("discountedTotal calculates a deterministic percentage discount", () => {
   assert.equal(discountedTotal(19.99, 25), 14.99);
 });
