@@ -1,0 +1,34 @@
+name: Inspect Codekeeper issue 63 run
+
+on:
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  inspect:
+    if: github.event.pull_request.head.ref == 'diag/issue-63-run'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Print issue workflow state
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          runs="$RUNNER_TEMP/codekeeper-runs.json"
+          gh api "repos/$GITHUB_REPOSITORY/actions/workflows/codekeeper.yml/runs?per_page=50" > "$runs"
+          echo 'CODEKEEPER_RUNS'
+          jq -r '.workflow_runs[] | [.id, .event, .status, (.conclusion // ""), (.head_sha // ""), (.display_title // ""), .created_at, .html_url] | @tsv' "$runs"
+          run_id="$(jq -r '[.workflow_runs[] | select(.event == "issues" and ((.display_title // "") | contains("#63")))][0].id // empty' "$runs")"
+          if [ -z "$run_id" ]; then
+            run_id="$(jq -r '[.workflow_runs[] | select(.event == "issues")][0].id // empty' "$runs")"
+          fi
+          test -n "$run_id" || { echo 'No recent issues-triggered Codekeeper run was found' >&2; exit 1; }
+          echo "SELECTED_RUN_ID=$run_id"
+          echo 'SELECTED_JOBS'
+          gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run_id/jobs?per_page=100" --jq '.jobs[] | [.id, .name, .status, (.conclusion // ""), (.started_at // ""), (.completed_at // ""), .html_url] | @tsv'
