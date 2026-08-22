@@ -1,4 +1,4 @@
-name: Read Codekeeper 0.4.9 npm receipt
+name: Verify Codekeeper 0.4.9 test pin
 
 on:
   pull_request:
@@ -9,58 +9,27 @@ permissions:
   contents: read
 
 jobs:
-  receipt:
+  verify:
     if: github.event.pull_request.head.ref == 'chore/update-codekeeper-0.4.9'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: chore/update-codekeeper-0.4.9
+          persist-credentials: false
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24.19.0
           package-manager-cache: false
-      - name: Install pinned npm
-        run: npm install --global npm@12.0.2 --ignore-scripts --no-audit --no-fund
-      - name: Read the exact public package receipt
+      - name: Verify the exact package pin and repository checks
+        env:
+          EXPECTED_INTEGRITY: 'sha512-nYwFsY/xgc9P7m1jhE4Uf9TGy8CtrpUaHwzJvCabweMmVUft0Pn1ac25JnQFhFMKm7vXYyuOtxiOTH+lhPNHHw=='
         run: |
           set -euo pipefail
-          receipt="$RUNNER_TEMP/codekeeper-0.4.9.json"
-          error_log="$RUNNER_TEMP/npm-view-error.log"
-          for attempt in $(seq 1 24); do
-            if npm view '@coryparry/codekeeper@0.4.9' version dist.integrity dist.tarball --json > "$receipt" 2> "$error_log"; then
-              if RECEIPT="$receipt" python3 <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          value = json.loads(Path(os.environ["RECEIPT"]).read_text())
-          if isinstance(value, list):
-              if len(value) != 1 or not isinstance(value[0], dict):
-                  raise SystemExit(1)
-              value = value[0]
-          if not isinstance(value, dict):
-              raise SystemExit(1)
-          integrity = value.get("dist.integrity") or (value.get("dist") or {}).get("integrity")
-          tarball = value.get("dist.tarball") or (value.get("dist") or {}).get("tarball")
-          if value.get("version") != "0.4.9":
-              raise SystemExit(1)
-          if not isinstance(integrity, str) or not integrity.startswith("sha512-"):
-              raise SystemExit(1)
-          if not isinstance(tarball, str) or not tarball.startswith("https://registry.npmjs.org/"):
-              raise SystemExit(1)
-          print("CODEKEEPER_NPM_RECEIPT=" + json.dumps({
-              "version": value["version"],
-              "integrity": integrity,
-              "tarball": tarball,
-          }, separators=(",", ":")))
-          PY
-              then
-                exit 0
-              fi
-            fi
-            if [ "$attempt" -eq 24 ]; then
-              cat "$error_log" >&2 || true
-              echo 'Codekeeper 0.4.9 is not available with a valid public receipt' >&2
-              exit 1
-            fi
-            sleep 5
-          done
+          test "$(grep -c 'package_version: \"0.4.9\"' .github/workflows/codekeeper.yml)" -eq 5
+          test "$(grep -Fc "$EXPECTED_INTEGRITY" .github/workflows/codekeeper.yml)" -eq 5
+          ! grep -Fq '0.4.8' .github/workflows/codekeeper.yml
+          npm test
+          ruby -e 'require "yaml"; YAML.load_file(".github/workflows/codekeeper.yml"); puts "parsed codekeeper.yml"'
+          echo "CODEKEEPER_WORKFLOW_SHA256=$(sha256sum .github/workflows/codekeeper.yml | cut -d' ' -f1)"
