@@ -1,4 +1,4 @@
-name: Finalize Codekeeper 0.4.8 test pin
+name: Verify Codekeeper 0.4.8 test pin
 
 on:
   pull_request:
@@ -6,138 +6,25 @@ on:
       - main
 
 permissions:
-  contents: write
-
-concurrency:
-  group: codekeeper-update-0.4.8
-  cancel-in-progress: false
+  contents: read
 
 jobs:
-  finalize:
+  verify:
     if: github.event.pull_request.head.ref == 'chore/update-codekeeper-0.4.8'
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: chore/update-codekeeper-0.4.8
-          fetch-depth: 0
-          persist-credentials: true
-      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-        with:
-          node-version: 24.19.0
-          package-manager-cache: false
-      - name: Install pinned npm
-        run: npm install --global npm@12.0.2 --ignore-scripts --no-audit --no-fund
-      - name: Pin the verified 0.4.8 package and remove this finalizer
+          persist-credentials: false
+      - name: Verify exact package pin and repository checks
         env:
-          HEAD_BRANCH: chore/update-codekeeper-0.4.8
-          TARGET_PACKAGE: '@coryparry/codekeeper@0.4.8'
-          EXPECTED_VERSION: '0.4.8'
           EXPECTED_INTEGRITY: 'sha512-cV1pW4tf16SB0af5xcxOAadZ7XwSbG2hRE8xfoC2lrcsspojGJtGqfbBN3VJfqxgPSCn/iCRJKaLEY4UMJVRyw=='
-          EXPECTED_SOURCE_COMMIT: '0193a0b8a0a92925e822c7442a4cae6806a0fad1'
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-
-          receipt="$RUNNER_TEMP/codekeeper-0.4.8-receipt.json"
-          error_report="$RUNNER_TEMP/codekeeper-0.4.8-receipt-error.log"
-          found=false
-          for attempt in $(seq 1 12); do
-            if npm view "$TARGET_PACKAGE" version dist.integrity dist.tarball --json > "$receipt" 2> "$error_report"; then
-              if RECEIPT="$receipt" python3 <<'PY'
-          import json
-          import os
-          from pathlib import Path
-
-          value = json.loads(Path(os.environ["RECEIPT"]).read_text())
-          if isinstance(value, list):
-              if len(value) != 1 or not isinstance(value[0], dict):
-                  raise SystemExit(1)
-              value = value[0]
-          if not isinstance(value, dict):
-              raise SystemExit(1)
-          integrity = value.get("dist.integrity") or (value.get("dist") or {}).get("integrity")
-          tarball = value.get("dist.tarball") or (value.get("dist") or {}).get("tarball")
-          if value.get("version") != os.environ["EXPECTED_VERSION"]:
-              raise SystemExit(1)
-          if integrity != os.environ["EXPECTED_INTEGRITY"]:
-              raise SystemExit(1)
-          if not isinstance(tarball, str) or not tarball.startswith("https://registry.npmjs.org/"):
-              raise SystemExit(1)
-          PY
-              then
-                found=true
-                break
-              fi
-            fi
-            if [ "$attempt" -eq 12 ]; then
-              cat "$error_report" >&2 || true
-              echo "Published Codekeeper 0.4.8 receipt did not match the verified release" >&2
-              exit 1
-            fi
-            sleep 5
-          done
-          test "$found" = true
-
-          RECEIPT="$receipt" python3 <<'PY'
-          import hashlib
-          import json
-          import os
-          from pathlib import Path
-
-          receipt = json.loads(Path(os.environ["RECEIPT"]).read_text())
-          if isinstance(receipt, list):
-              if len(receipt) != 1 or not isinstance(receipt[0], dict):
-                  raise SystemExit("npm returned an ambiguous receipt")
-              receipt = receipt[0]
-          if not isinstance(receipt, dict):
-              raise SystemExit("npm returned an invalid receipt")
-
-          version = receipt.get("version")
-          integrity = receipt.get("dist.integrity") or (receipt.get("dist") or {}).get("integrity")
-          if version != os.environ["EXPECTED_VERSION"]:
-              raise SystemExit(f"unexpected package version: {version!r}")
-          if integrity != os.environ["EXPECTED_INTEGRITY"]:
-              raise SystemExit("npm integrity does not match the verified release")
-
-          release_path = Path(".github/codekeeper-release.json")
-          workflow_path = Path(".github/workflows/codekeeper.yml")
-          release = json.loads(release_path.read_text())
-          if release.get("package", {}).get("name") != "@coryparry/codekeeper":
-              raise SystemExit("installed package identity is unexpected")
-          if release["package"].get("version") != "0.4.7":
-              raise SystemExit("test environment is no longer pinned to 0.4.7")
-          old_integrity = release["package"].get("integrity")
-          if not isinstance(old_integrity, str) or not old_integrity.startswith("sha512-"):
-              raise SystemExit("existing package receipt is invalid")
-
-          workflow = workflow_path.read_text()
-          version_token = 'package_version: "0.4.7"'
-          if workflow.count(version_token) < 1:
-              raise SystemExit("no 0.4.7 workflow pins were found")
-          if workflow.count(old_integrity) < 1:
-              raise SystemExit("no matching 0.4.7 integrity pins were found")
-          workflow = workflow.replace(version_token, f'package_version: "{version}"')
-          workflow = workflow.replace(old_integrity, integrity)
-          if "0.4.7" in workflow or old_integrity in workflow:
-              raise SystemExit("an old package pin remains in the workflow")
-          workflow_path.write_text(workflow)
-
-          release["package"]["version"] = version
-          release["package"]["integrity"] = integrity
-          release["source"]["commit"] = os.environ["EXPECTED_SOURCE_COMMIT"]
-          release["managedFiles"][".github/workflows/codekeeper.yml"] = hashlib.sha256(
-              workflow.encode()
-          ).hexdigest()
-          release_path.write_text(json.dumps(release, indent=2) + "\n")
-          PY
-
-          rm .github/workflows/codekeeper-update-0.4.8-temp.yml
+          test "$(grep -c 'package_version: \"0.4.8\"' .github/workflows/codekeeper.yml)" -eq 5
+          test "$(grep -Fc "$EXPECTED_INTEGRITY" .github/workflows/codekeeper.yml)" -eq 5
+          ! grep -Fq '0.4.7' .github/workflows/codekeeper.yml
           npm test
           ruby -e 'require "yaml"; YAML.load_file(".github/workflows/codekeeper.yml"); puts "parsed codekeeper.yml"'
-          git diff --check
-          git add -A
-          git commit -m 'chore: update test environment to Codekeeper 0.4.8'
-          git push origin "HEAD:refs/heads/${HEAD_BRANCH}"
+          echo "CODEKEEPER_WORKFLOW_SHA256=$(sha256sum .github/workflows/codekeeper.yml | cut -d' ' -f1)"
