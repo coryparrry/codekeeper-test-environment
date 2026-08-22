@@ -44,8 +44,13 @@ on:
         type: boolean
         default: false
 
+# Nested reusable-workflow jobs request contents, issues, and pull-requests
+# read. GitHub rejects the call when this caller ceiling is narrower, even for
+# jobs that would be skipped. Mutations still use the App token, not GITHUB_TOKEN.
 permissions:
   contents: read
+  issues: read
+  pull-requests: read
 
 jobs:
   review:
@@ -73,8 +78,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: review
-      package_version: "0.4.0"
-      package_integrity: "sha512-RyUfYxWluRmg5u9+3aPX7i2b3ZzYfNdF6fD2lRdkEq5DCpJBxbeN0fNE1dIBc2ZyCuPQOdV7laVKWpO+9kmKLw=="
+      package_version: "0.4.1"
+      package_integrity: "sha512-Me1Z8WkLfxdXApZm1jo+ErRWsFeQvWdnV1ZS9AWgVcqYww3xwfUfzHZoXF+c4rpW14bcJsAQamQ4J7S1zb5hZA=="
       installed_modes: "review,maintain,issues,fix"
       enabled: >-
         ${{
@@ -132,8 +137,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: issues
-      package_version: "0.4.0"
-      package_integrity: "sha512-RyUfYxWluRmg5u9+3aPX7i2b3ZzYfNdF6fD2lRdkEq5DCpJBxbeN0fNE1dIBc2ZyCuPQOdV7laVKWpO+9kmKLw=="
+      package_version: "0.4.1"
+      package_integrity: "sha512-Me1Z8WkLfxdXApZm1jo+ErRWsFeQvWdnV1ZS9AWgVcqYww3xwfUfzHZoXF+c4rpW14bcJsAQamQ4J7S1zb5hZA=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: false
@@ -166,8 +171,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: fix
-      package_version: "0.4.0"
-      package_integrity: "sha512-RyUfYxWluRmg5u9+3aPX7i2b3ZzYfNdF6fD2lRdkEq5DCpJBxbeN0fNE1dIBc2ZyCuPQOdV7laVKWpO+9kmKLw=="
+      package_version: "0.4.1"
+      package_integrity: "sha512-Me1Z8WkLfxdXApZm1jo+ErRWsFeQvWdnV1ZS9AWgVcqYww3xwfUfzHZoXF+c4rpW14bcJsAQamQ4J7S1zb5hZA=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
@@ -191,8 +196,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: maintain
-      package_version: "0.4.0"
-      package_integrity: "sha512-RyUfYxWluRmg5u9+3aPX7i2b3ZzYfNdF6fD2lRdkEq5DCpJBxbeN0fNE1dIBc2ZyCuPQOdV7laVKWpO+9kmKLw=="
+      package_version: "0.4.1"
+      package_integrity: "sha512-Me1Z8WkLfxdXApZm1jo+ErRWsFeQvWdnV1ZS9AWgVcqYww3xwfUfzHZoXF+c4rpW14bcJsAQamQ4J7S1zb5hZA=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: ${{ github.event_name == 'schedule' || inputs.dry_run }}
@@ -226,8 +231,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: auto
-      package_version: "0.4.0"
-      package_integrity: "sha512-RyUfYxWluRmg5u9+3aPX7i2b3ZzYfNdF6fD2lRdkEq5DCpJBxbeN0fNE1dIBc2ZyCuPQOdV7laVKWpO+9kmKLw=="
+      package_version: "0.4.1"
+      package_integrity: "sha512-Me1Z8WkLfxdXApZm1jo+ErRWsFeQvWdnV1ZS9AWgVcqYww3xwfUfzHZoXF+c4rpW14bcJsAQamQ4J7S1zb5hZA=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: false
