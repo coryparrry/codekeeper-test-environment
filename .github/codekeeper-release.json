@@ -2,15 +2,15 @@
   "version": 2,
   "package": {
     "name": "@coryparry/codekeeper",
-    "version": "0.5.0",
-    "integrity": "sha512-XXL1HgIaIUHWt5X4CidL7fWHCtpcQ0KVFkkoPJIovPBE8NkD/cWTh5dCzonXkiwkpJyiqAkXCfpqUrhNCe37oA=="
+    "version": "0.5.1",
+    "integrity": "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
   },
   "source": {
     "repository": "coryparrry/Codekeeper",
-    "commit": "c15f4de942da42fe6a0b78bbddb0fcff1e22d41d"
+    "commit": "d6ad5df7a86085d0dde6aa0a0d285fa21aa1d5ff"
   },
   "managedFiles": {
-    ".github/workflows/codekeeper.yml": "7c332748ac7ff8282ad4eb7b3de114a1a3714022dacd1019bee0c338ac6cf35f",
+    ".github/workflows/codekeeper.yml": "0aedcd82f3b625601ac6e0db4347284481a1080c89233ffca9e7eb6872d51549",
     ".github/codekeeper/actions/acquire-package/action.yml": "62b1451952adf82418e54a93cbe457314dfa1a228bc97eceb12de2a2d3fc14c6",
     ".github/workflows/codekeeper-runtime.yml": "da53e5595df2ecd5fde6365beebea7845a41f9c6978e4cadd75fbf59a6e67bad",
     ".github/codekeeper/README.md": "ba6502612135abf06646bb99179553658dec1464b89b9fa0a7bd7ddd944dc3e5"

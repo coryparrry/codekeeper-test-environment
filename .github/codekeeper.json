@@ -307,7 +307,9 @@
     "createDeferredIssues": true,
     "maximumBlockingFindings": 8,
     "maximumNonBlockingFindings": 8,
-    "allowedLabels": [],
+    "allowedLabels": [
+      "needs tests"
+    ],
     "managedLabels": [
       "changes required",
       "review needed",
