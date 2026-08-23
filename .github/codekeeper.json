@@ -49,7 +49,7 @@
       "review": {
         "provider": "openai",
         "model": "gpt-5.6-luna",
-        "effort": "medium",
+        "effort": "high",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -61,12 +61,12 @@
           "enabled": true,
           "allowWrites": false,
           "model": "gpt-5.6-luna",
-          "effort": "medium"
+          "effort": "high"
         }
       },
       "audit": {
         "provider": "openai",
-        "model": "gpt-5.6-sol",
+        "model": "gpt-5.6-luna",
         "effort": "high",
         "maxTurns": 1,
         "maximumAttempts": 2,
@@ -78,14 +78,14 @@
         "workspace": {
           "enabled": true,
           "allowWrites": true,
-          "model": "gpt-5.6-sol",
+          "model": "gpt-5.6-luna",
           "effort": "high"
         }
       },
       "issue": {
         "provider": "openai",
-        "model": "gpt-5.6-terra",
-        "effort": "medium",
+        "model": "gpt-5.6-luna",
+        "effort": "high",
         "maxTurns": 1,
         "maximumAttempts": 2,
         "modelSettings": {
@@ -96,13 +96,13 @@
         "workspace": {
           "enabled": true,
           "allowWrites": false,
-          "model": "gpt-5.6-terra",
-          "effort": "medium"
+          "model": "gpt-5.6-luna",
+          "effort": "high"
         }
       },
       "fix": {
         "provider": "openai",
-        "model": "gpt-5.6-terra",
+        "model": "gpt-5.6-luna",
         "effort": "high",
         "maxTurns": 1,
         "maximumAttempts": 2,
@@ -114,7 +114,7 @@
         "workspace": {
           "enabled": true,
           "allowWrites": true,
-          "model": "gpt-5.6-terra",
+          "model": "gpt-5.6-luna",
           "effort": "high"
         }
       }
@@ -231,7 +231,7 @@
     }
   },
   "review": {
-    "autoRepair": false,
+    "autoRepair": true,
     "createDeferredIssues": true,
     "maximumBlockingFindings": 8,
     "maximumNonBlockingFindings": 8,
@@ -309,7 +309,7 @@
   "audit": {
     "maximumIssuesPerRun": 5,
     "repair": {
-      "enabled": false,
+      "enabled": true,
       "allowedPaths": [
         "src/discount.mjs",
         "test/discount.test.mjs"
@@ -353,7 +353,7 @@
   },
   "issues": {
     "allowAiImplementation": true,
-    "closeExactDuplicates": false,
+    "closeExactDuplicates": true,
     "closeResolvedIssues": true,
     "maximumOpenIssueContext": 50,
     "managedLabels": [
@@ -380,7 +380,7 @@
     ]
   },
   "merge": {
-    "enabled": false,
+    "enabled": true,
     "method": "SQUASH",
     "allowAutomationPullRequests": true,
     "allowUserPullRequests": false,
