@@ -1,3 +1,131 @@
-PR #69 Codekeeper diagnostic
+PR #69 workflow diagnostic
 
-No matching Codekeeper pull_request_target run found.
+RUN 32630301070
+name=Diagnose PR 69 Codekeeper failure title=chore(ci): diagnose PR 69 Codekeeper failure
+status=in_progress conclusion=None
+head_branch=diag/pr69-codekeeper-failure head_sha=29a1bd5eb0d3971ccf3afaab9e1f70367cf76754 event=pull_request
+created_at=2026-08-23T09:11:12Z updated_at=2026-08-23T09:11:15Z
+JOB 97171962905 diagnose status=in_progress conclusion=None
+  STEP 1 Set up job status=completed conclusion=success
+  STEP 2 Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 status=completed conclusion=success
+  STEP 3 Capture recent workflow runs and failed logs status=in_progress conclusion=None
+  STEP 6 Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 status=pending conclusion=None
+
+RUN 32630299975
+name=Codekeeper pull_request_target #70 title=Codekeeper pull_request_target #70
+status=pending conclusion=None
+head_branch=diag/pr69-codekeeper-failure head_sha=29a1bd5eb0d3971ccf3afaab9e1f70367cf76754 event=pull_request_target
+created_at=2026-08-23T09:11:10Z updated_at=2026-08-23T09:11:11Z
+JOB 97171960491 review / Codekeeper generic compute status=pending conclusion=None
+JOB 97171960609 review / Codekeeper App credential verification status=pending conclusion=None
+JOB 97171960758 issue status=completed conclusion=skipped
+JOB 97171960805 maintain status=completed conclusion=skipped
+JOB 97171960905 command status=completed conclusion=skipped
+JOB 97171971182 fix status=completed conclusion=skipped
+
+RUN 32630269222
+name=Diagnose PR 69 Codekeeper failure title=chore(ci): diagnose PR 69 Codekeeper failure
+status=completed conclusion=action_required
+head_branch=diag/pr69-codekeeper-failure head_sha=36d62b3329d856afe3397fa9599a1352984214d6 event=pull_request
+created_at=2026-08-23T09:10:30Z updated_at=2026-08-23T09:10:30Z
+
+RUN 32630256848
+name=Codekeeper pull_request_target #70 title=Codekeeper pull_request_target #70
+status=in_progress conclusion=None
+head_branch=diag/pr69-codekeeper-failure head_sha=8781e002437247418e103932d3c02f8f5a90ca45 event=pull_request_target
+created_at=2026-08-23T09:10:17Z updated_at=2026-08-23T09:10:21Z
+JOB 97171853881 review / Codekeeper generic compute status=in_progress conclusion=None
+  STEP 1 Set up job status=completed conclusion=success
+  STEP 2 Check out trusted default branch status=completed conclusion=success
+  STEP 3 Check out the frozen execution target status=completed conclusion=success
+  STEP 4 Set up pinned Node.js status=completed conclusion=success
+  STEP 5 Acquire exact Codekeeper package status=completed conclusion=success
+  STEP 6 Install exact Codekeeper runtime status=completed conclusion=success
+  STEP 7 Resolve the verified mode plan and prepare the bundle status=completed conclusion=success
+  STEP 8 Run the isolated workspace stage status=in_progress conclusion=None
+  STEP 9 Run the configured coordinator stage status=pending conclusion=None
+  STEP 10 Validate the untrusted candidate status=pending conclusion=None
+  STEP 11 Upload the compute candidate handoff status=pending conclusion=None
+  STEP 20 Post Set up pinned Node.js status=pending conclusion=None
+  STEP 21 Post Check out the frozen execution target status=pending conclusion=None
+  STEP 22 Post Check out trusted default branch status=pending conclusion=None
+JOB 97171854174 maintain status=completed conclusion=skipped
+JOB 97171854256 issue status=completed conclusion=skipped
+JOB 97171854320 command status=completed conclusion=skipped
+JOB 97171854403 review / Codekeeper App credential verification status=completed conclusion=skipped
+JOB 97171873238 fix status=completed conclusion=skipped
+
+RUN 32630256762
+name=Diagnose PR 69 Codekeeper failure title=chore(ci): diagnose PR 69 Codekeeper failure
+status=completed conclusion=success
+head_branch=diag/pr69-codekeeper-failure head_sha=8781e002437247418e103932d3c02f8f5a90ca45 event=pull_request
+created_at=2026-08-23T09:10:17Z updated_at=2026-08-23T09:10:28Z
+JOB 97171852825 diagnose status=completed conclusion=success
+  STEP 1 Set up job status=completed conclusion=success
+  STEP 2 Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 status=completed conclusion=success
+  STEP 3 Capture the failed Codekeeper run and logs status=completed conclusion=success
+  STEP 6 Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 status=completed conclusion=success
+  STEP 7 Complete job status=completed conclusion=success
+
+RUN 32629755225
+name=Codekeeper issue_comment #69 title=Codekeeper issue_comment #69
+status=completed conclusion=skipped
+head_branch=main head_sha=c20ba46ffeaf6ce44702c8920e90288f1780783c event=issue_comment
+created_at=2026-08-23T08:59:41Z updated_at=2026-08-23T08:59:52Z
+JOB 97170601538 fix status=completed conclusion=skipped
+JOB 97170601642 command status=completed conclusion=skipped
+JOB 97170601784 issue status=completed conclusion=skipped
+JOB 97170611226 maintain status=completed conclusion=skipped
+JOB 97170618513 review status=completed conclusion=skipped
+
+RUN 32629751721
+name=Codekeeper pull_request_target #69 title=Codekeeper pull_request_target #69
+status=completed conclusion=failure
+head_branch=acceptance/storefront-pricing-suite head_sha=2321804855819b7717c2560dfeb23ae4c289c9b0 event=pull_request_target
+created_at=2026-08-23T08:59:36Z updated_at=2026-08-23T09:02:17Z
+JOB 97170592800 review / Codekeeper generic compute status=completed conclusion=failure
+  STEP 1 Set up job status=completed conclusion=success
+  STEP 2 Check out trusted default branch status=completed conclusion=success
+  STEP 3 Check out the frozen execution target status=completed conclusion=success
+  STEP 4 Set up pinned Node.js status=completed conclusion=success
+  STEP 5 Acquire exact Codekeeper package status=completed conclusion=success
+  STEP 6 Install exact Codekeeper runtime status=completed conclusion=success
+  STEP 7 Resolve the verified mode plan and prepare the bundle status=completed conclusion=success
+  STEP 8 Run the isolated workspace stage status=completed conclusion=failure
+  STEP 9 Run the configured coordinator stage status=completed conclusion=skipped
+  STEP 10 Validate the untrusted candidate status=completed conclusion=skipped
+  STEP 11 Upload the compute candidate handoff status=completed conclusion=skipped
+  STEP 20 Post Set up pinned Node.js status=completed conclusion=skipped
+  STEP 21 Post Check out the frozen execution target status=completed conclusion=success
+  STEP 22 Post Check out trusted default branch status=completed conclusion=success
+  STEP 23 Complete job status=completed conclusion=success
+--- FAILED JOB LOG ---
+<log fetch failed: HTTP Error 401: Server failed to authenticate the request. Please refer to the information in the www-authenticate header.>
+--- END FAILED JOB LOG ---
+JOB 97170593064 issue status=completed conclusion=skipped
+JOB 97170593200 command status=completed conclusion=skipped
+JOB 97170593319 review / Codekeeper App credential verification status=completed conclusion=skipped
+JOB 97170604316 maintain status=completed conclusion=skipped
+JOB 97170605410 fix status=completed conclusion=skipped
+JOB 97170906238 review / Codekeeper review gate status=completed conclusion=failure
+  STEP 1 Set up job status=completed conclusion=success
+  STEP 2 Fail closed when review compute did not complete status=completed conclusion=failure
+  STEP 3 Check out trusted default branch status=completed conclusion=skipped
+  STEP 4 Set up pinned Node.js status=completed conclusion=skipped
+  STEP 5 Acquire exact Codekeeper package status=completed conclusion=skipped
+  STEP 6 Install exact Codekeeper runtime status=completed conclusion=skipped
+  STEP 7 Download the verified candidate handoff status=completed conclusion=skipped
+  STEP 8 Check out the frozen publication target status=completed conclusion=skipped
+  STEP 9 Resolve the verified publication mode plan status=completed conclusion=skipped
+  STEP 10 Seal the candidate before App credentials status=completed conclusion=skipped
+  STEP 11 Validate App permissions from the verified mode plan status=completed conclusion=skipped
+  STEP 12 Create the short-lived GitHub App token status=completed conclusion=skipped
+  STEP 13 Resolve immutable automation bot identity status=completed conclusion=skipped
+  STEP 14 Publish the sealed result status=completed conclusion=skipped
+  STEP 15 Record a tokenless dry-run seal status=completed conclusion=skipped
+  STEP 16 Enforce the required review gate status=completed conclusion=failure
+  STEP 17 Complete job status=completed conclusion=success
+--- FAILED JOB LOG ---
+<log fetch failed: HTTP Error 401: Server failed to authenticate the request. Please refer to the information in the www-authenticate header.>
+--- END FAILED JOB LOG ---
+JOB 97170906903 review / Codekeeper generic validation status=completed conclusion=skipped
