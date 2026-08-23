@@ -14,7 +14,7 @@ permissions:
 
 concurrency:
   group: codekeeper-test-environment-update-0.4.10
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   update:
@@ -33,10 +33,11 @@ jobs:
           node-version: 24.19.0
           package-manager-cache: false
 
-      - name: Retrieve, verify, install, and prove the exact public release
+      - name: Download, independently verify, install, and prove the exact public release
         env:
           HEAD_BRANCH: chore/update-codekeeper-0.4.10
           EXPECTED_VERSION: 0.4.10
+          EXPECTED_INTEGRITY: sha512-4A9SskfAAPxJJsd7wBUSFfcaMDYoxlnXAh/w5MvbchiCQJCyeVrGcGeJXuAoXusurF1Mrzyen2gkRZrtQqczjw==
           EXPECTED_SOURCE_COMMIT: 884e380ee31f4dd595ec963f3a0197cdeaf40d68
           OLD_VERSION: 0.4.9
           OLD_INTEGRITY: sha512-nYwFsY/xgc9P7m1jhE4Uf9TGy8CtrpUaHwzJvCabweMmVUft0Pn1ac25JnQFhFMKm7vXYyuOtxiOTH+lhPNHHw==
@@ -45,44 +46,35 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
 
-          npm install --global npm@12.0.2 --ignore-scripts --no-audit --no-fund
           release_root="$RUNNER_TEMP/codekeeper-0.4.10"
-          mkdir -p "$release_root"
+          tarball="$release_root/codekeeper-0.4.10.tgz"
+          mkdir -p "$release_root/unpacked"
 
-          integrity=""
+          downloaded=false
           for attempt in $(seq 1 60); do
-            integrity="$(npm view "@coryparry/codekeeper@$EXPECTED_VERSION" dist.integrity --json 2>/dev/null | tr -d '"\n' || true)"
-            if [[ "$integrity" == sha512-* ]]; then
+            url="https://registry.npmjs.org/@coryparry/codekeeper/-/codekeeper-0.4.10.tgz?codekeeper_run=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}-${attempt}"
+            if curl --fail --silent --show-error --location \
+              --header 'Cache-Control: no-cache' --output "$tarball" "$url"; then
+              downloaded=true
               break
             fi
+            rm -f "$tarball"
             sleep 5
           done
-          [[ "$integrity" == sha512-* ]] || {
-            echo "@coryparry/codekeeper@$EXPECTED_VERSION was not published with SHA-512 integrity" >&2
+          test "$downloaded" = true || {
+            echo "The exact Codekeeper 0.4.10 tarball was not available from the public registry" >&2
             exit 1
           }
 
-          (
-            cd "$release_root"
-            npm pack --json --ignore-scripts --pack-destination "$release_root" \
-              "@coryparry/codekeeper@$EXPECTED_VERSION" > npm-pack.json
-          )
-
-          REPORT="$release_root/npm-pack.json" EXPECTED_VERSION="$EXPECTED_VERSION" \
-            EXPECTED_INTEGRITY="$integrity" TARBALL_PATH="$release_root/tarball.txt" \
-            node --input-type=module -e '
-              import { readFileSync, writeFileSync } from "node:fs";
-              import { join } from "node:path";
-              const report = JSON.parse(readFileSync(process.env.REPORT, "utf8"));
-              if (!Array.isArray(report) || report.length !== 1) throw new Error("npm pack returned an invalid report");
-              const entry = report[0];
-              if (entry.name !== "@coryparry/codekeeper" || entry.version !== process.env.EXPECTED_VERSION || entry.integrity !== process.env.EXPECTED_INTEGRITY) {
-                throw new Error("npm pack did not return the exact published Codekeeper release");
-              }
-              writeFileSync(process.env.TARBALL_PATH, `${join(process.env.REPORT.replace(/\/npm-pack\.json$/, ""), entry.filename)}\n`);
-            '
-          tarball="$(cat "$release_root/tarball.txt")"
-          mkdir -p "$release_root/unpacked"
+          TARBALL="$tarball" EXPECTED_INTEGRITY="$EXPECTED_INTEGRITY" node --input-type=module -e '
+            import { createHash } from "node:crypto";
+            import { readFileSync } from "node:fs";
+            const actual = `sha512-${createHash("sha512").update(readFileSync(process.env.TARBALL)).digest("base64")}`;
+            if (actual !== process.env.EXPECTED_INTEGRITY) {
+              throw new Error(`Public tarball integrity mismatch: ${actual}`);
+            }
+          '
+          tar -tzf "$tarball" >/dev/null
           tar -xzf "$tarball" -C "$release_root/unpacked"
 
           MANIFEST="$release_root/unpacked/package/release/manifest.json" \
@@ -98,7 +90,7 @@ jobs:
               }
             '
 
-          INTEGRITY="$integrity" EXPECTED_VERSION="$EXPECTED_VERSION" \
+          INTEGRITY="$EXPECTED_INTEGRITY" EXPECTED_VERSION="$EXPECTED_VERSION" \
             EXPECTED_SOURCE_COMMIT="$EXPECTED_SOURCE_COMMIT" OLD_VERSION="$OLD_VERSION" \
             OLD_INTEGRITY="$OLD_INTEGRITY" node --input-type=module <<'NODE'
           import { createHash } from "node:crypto";
@@ -131,7 +123,7 @@ jobs:
 
           rm .github/workflows/codekeeper-0.4.10-updater-temp.yml
 
-          EXPECTED_VERSION="$EXPECTED_VERSION" INTEGRITY="$integrity" node --input-type=module <<'NODE'
+          EXPECTED_VERSION="$EXPECTED_VERSION" INTEGRITY="$EXPECTED_INTEGRITY" node --input-type=module <<'NODE'
           import { readFileSync } from "node:fs";
           const workflow = readFileSync(".github/workflows/codekeeper.yml", "utf8");
           const receipt = JSON.parse(readFileSync(".github/codekeeper-release.json", "utf8"));
