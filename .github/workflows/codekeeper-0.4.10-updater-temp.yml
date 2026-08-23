@@ -1,0 +1,155 @@
+name: Install Codekeeper 0.4.10 in the test environment
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+
+concurrency:
+  group: codekeeper-test-environment-update-0.4.10
+  cancel-in-progress: false
+
+jobs:
+  update:
+    if: github.event.pull_request.head.ref == 'chore/update-codekeeper-0.4.10'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: chore/update-codekeeper-0.4.10
+          fetch-depth: 0
+          persist-credentials: true
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24.19.0
+          package-manager-cache: false
+
+      - name: Retrieve, verify, install, and prove the exact public release
+        env:
+          HEAD_BRANCH: chore/update-codekeeper-0.4.10
+          EXPECTED_VERSION: 0.4.10
+          EXPECTED_SOURCE_COMMIT: 884e380ee31f4dd595ec963f3a0197cdeaf40d68
+          OLD_VERSION: 0.4.9
+          OLD_INTEGRITY: sha512-nYwFsY/xgc9P7m1jhE4Uf9TGy8CtrpUaHwzJvCabweMmVUft0Pn1ac25JnQFhFMKm7vXYyuOtxiOTH+lhPNHHw==
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+
+          npm install --global npm@12.0.2 --ignore-scripts --no-audit --no-fund
+          release_root="$RUNNER_TEMP/codekeeper-0.4.10"
+          mkdir -p "$release_root"
+
+          integrity=""
+          for attempt in $(seq 1 60); do
+            integrity="$(npm view "@coryparry/codekeeper@$EXPECTED_VERSION" dist.integrity --json 2>/dev/null | tr -d '"\n' || true)"
+            if [[ "$integrity" == sha512-* ]]; then
+              break
+            fi
+            sleep 5
+          done
+          [[ "$integrity" == sha512-* ]] || {
+            echo "@coryparry/codekeeper@$EXPECTED_VERSION was not published with SHA-512 integrity" >&2
+            exit 1
+          }
+
+          (
+            cd "$release_root"
+            npm pack --json --ignore-scripts --pack-destination "$release_root" \
+              "@coryparry/codekeeper@$EXPECTED_VERSION" > npm-pack.json
+          )
+
+          REPORT="$release_root/npm-pack.json" EXPECTED_VERSION="$EXPECTED_VERSION" \
+            EXPECTED_INTEGRITY="$integrity" TARBALL_PATH="$release_root/tarball.txt" \
+            node --input-type=module -e '
+              import { readFileSync, writeFileSync } from "node:fs";
+              import { join } from "node:path";
+              const report = JSON.parse(readFileSync(process.env.REPORT, "utf8"));
+              if (!Array.isArray(report) || report.length !== 1) throw new Error("npm pack returned an invalid report");
+              const entry = report[0];
+              if (entry.name !== "@coryparry/codekeeper" || entry.version !== process.env.EXPECTED_VERSION || entry.integrity !== process.env.EXPECTED_INTEGRITY) {
+                throw new Error("npm pack did not return the exact published Codekeeper release");
+              }
+              writeFileSync(process.env.TARBALL_PATH, `${join(process.env.REPORT.replace(/\/npm-pack\.json$/, ""), entry.filename)}\n`);
+            '
+          tarball="$(cat "$release_root/tarball.txt")"
+          mkdir -p "$release_root/unpacked"
+          tar -xzf "$tarball" -C "$release_root/unpacked"
+
+          MANIFEST="$release_root/unpacked/package/release/manifest.json" \
+            EXPECTED_VERSION="$EXPECTED_VERSION" EXPECTED_SOURCE_COMMIT="$EXPECTED_SOURCE_COMMIT" \
+            node --input-type=module -e '
+              import { readFileSync } from "node:fs";
+              const manifest = JSON.parse(readFileSync(process.env.MANIFEST, "utf8"));
+              if (manifest?.package?.name !== "@coryparry/codekeeper" || manifest.package.version !== process.env.EXPECTED_VERSION) {
+                throw new Error("Packaged release manifest identity mismatch");
+              }
+              if (manifest?.source?.repository !== "https://github.com/coryparrry/Codekeeper" || manifest.source.commit !== process.env.EXPECTED_SOURCE_COMMIT) {
+                throw new Error(`Packaged source commit mismatch: ${manifest?.source?.commit ?? "missing"}`);
+              }
+            '
+
+          INTEGRITY="$integrity" EXPECTED_VERSION="$EXPECTED_VERSION" \
+            EXPECTED_SOURCE_COMMIT="$EXPECTED_SOURCE_COMMIT" OLD_VERSION="$OLD_VERSION" \
+            OLD_INTEGRITY="$OLD_INTEGRITY" node --input-type=module <<'NODE'
+          import { createHash } from "node:crypto";
+          import { readFileSync, writeFileSync } from "node:fs";
+
+          const workflowPath = ".github/workflows/codekeeper.yml";
+          const receiptPath = ".github/codekeeper-release.json";
+          const workflow = readFileSync(workflowPath, "utf8");
+          const oldVersion = `package_version: "${process.env.OLD_VERSION}"`;
+          const newVersion = `package_version: "${process.env.EXPECTED_VERSION}"`;
+          const oldIntegrity = `package_integrity: "${process.env.OLD_INTEGRITY}"`;
+          const newIntegrity = `package_integrity: "${process.env.INTEGRITY}"`;
+          const versionCount = workflow.split(oldVersion).length - 1;
+          const integrityCount = workflow.split(oldIntegrity).length - 1;
+          if (versionCount !== 5 || integrityCount !== 5) {
+            throw new Error(`Expected five old package pins; found version=${versionCount}, integrity=${integrityCount}`);
+          }
+          const updatedWorkflow = workflow
+            .split(oldVersion).join(newVersion)
+            .split(oldIntegrity).join(newIntegrity);
+          writeFileSync(workflowPath, updatedWorkflow);
+
+          const receipt = JSON.parse(readFileSync(receiptPath, "utf8"));
+          receipt.package.version = process.env.EXPECTED_VERSION;
+          receipt.package.integrity = process.env.INTEGRITY;
+          receipt.source.commit = process.env.EXPECTED_SOURCE_COMMIT;
+          receipt.managedFiles[workflowPath] = createHash("sha256").update(updatedWorkflow).digest("hex");
+          writeFileSync(receiptPath, `${JSON.stringify(receipt, null, 2)}\n`);
+          NODE
+
+          rm .github/workflows/codekeeper-0.4.10-updater-temp.yml
+
+          EXPECTED_VERSION="$EXPECTED_VERSION" INTEGRITY="$integrity" node --input-type=module <<'NODE'
+          import { readFileSync } from "node:fs";
+          const workflow = readFileSync(".github/workflows/codekeeper.yml", "utf8");
+          const receipt = JSON.parse(readFileSync(".github/codekeeper-release.json", "utf8"));
+          const versionPin = `package_version: "${process.env.EXPECTED_VERSION}"`;
+          const integrityPin = `package_integrity: "${process.env.INTEGRITY}"`;
+          if (workflow.split(versionPin).length - 1 !== 5) throw new Error("Not every mode uses the new release version");
+          if (workflow.split(integrityPin).length - 1 !== 5) throw new Error("Not every mode uses the new release integrity");
+          if (workflow.includes("0.4.9")) throw new Error("The old release version remains in the caller workflow");
+          if (receipt.package.version !== process.env.EXPECTED_VERSION || receipt.package.integrity !== process.env.INTEGRITY) {
+            throw new Error("Release receipt does not match the caller workflow");
+          }
+          NODE
+
+          ruby -e 'require "yaml"; YAML.load_file(".github/workflows/codekeeper.yml")'
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm test
+          git diff --check
+
+          git add -A
+          git commit -m 'chore: update test environment to Codekeeper 0.4.10'
+          git push origin "HEAD:refs/heads/${HEAD_BRANCH}"
