@@ -223,11 +223,83 @@
     },
     "security": {
       "color": "B60205",
-      "description": "Repository-owned security classification used only for review routing"
+      "description": "Security-sensitive work"
     },
     "risk high": {
       "color": "B60205",
       "description": "Repository-owned high-risk classification used only for review routing"
+    },
+    "automated maintenance": {
+      "color": "0E8A16",
+      "description": "Created from an automated repository maintenance finding"
+    },
+    "ready for fix": {
+      "color": "1D76DB",
+      "description": "Clear and bounded enough for implementation"
+    },
+    "changes required": {
+      "color": "B60205",
+      "description": "Verified changes are required before merge"
+    },
+    "review needed": {
+      "color": "FBCA04",
+      "description": "Human review or judgment is required"
+    },
+    "paused": {
+      "color": "FBCA04",
+      "description": "Automatic work is paused"
+    },
+    "merge ready": {
+      "color": "0E8A16",
+      "description": "Meets the configured merge policy"
+    },
+    "possible duplicate": {
+      "color": "CFD3D7",
+      "description": "Likely duplicate requiring confirmation"
+    },
+    "deferred": {
+      "color": "C5DEF5",
+      "description": "Verified work deferred from a pull request"
+    },
+    "needs information": {
+      "color": "FBCA04",
+      "description": "More information is required before work can begin"
+    },
+    "needs tests": {
+      "color": "D4C5F9",
+      "description": "Deterministic test coverage is missing"
+    },
+    "urgent": {
+      "color": "B60205",
+      "description": "Urgent priority"
+    },
+    "high priority": {
+      "color": "FBCA04",
+      "description": "High priority"
+    },
+    "bug": {
+      "color": "D73A4A",
+      "description": "Correctness defect"
+    },
+    "enhancement": {
+      "color": "A2EEEF",
+      "description": "Feature or product enhancement"
+    },
+    "documentation": {
+      "color": "0075CA",
+      "description": "Documentation work"
+    },
+    "question": {
+      "color": "D876E3",
+      "description": "Question or clarification"
+    },
+    "maintenance": {
+      "color": "C5DEF5",
+      "description": "Repository maintenance"
+    },
+    "testing": {
+      "color": "BFDADC",
+      "description": "Test coverage or test infrastructure"
     }
   },
   "review": {
@@ -235,17 +307,12 @@
     "createDeferredIssues": true,
     "maximumBlockingFindings": 8,
     "maximumNonBlockingFindings": 8,
-    "allowedLabels": [
-      "codekeeper:type-bug",
-      "codekeeper:type-documentation",
-      "codekeeper:type-enhancement",
-      "codekeeper:type-maintenance",
-      "codekeeper:type-question",
-      "codekeeper:type-security",
-      "codekeeper:type-testing",
-      "codekeeper:needs-tests"
-    ],
+    "allowedLabels": [],
     "managedLabels": [
+      "changes required",
+      "review needed",
+      "merge ready",
+      "needs tests",
       "codekeeper:reviewed",
       "codekeeper:blocked",
       "codekeeper:manual-review",
@@ -253,14 +320,7 @@
       "codekeeper:needs-tests",
       "codekeeper:risk-low",
       "codekeeper:risk-medium",
-      "codekeeper:risk-high",
-      "codekeeper:type-bug",
-      "codekeeper:type-documentation",
-      "codekeeper:type-enhancement",
-      "codekeeper:type-maintenance",
-      "codekeeper:type-question",
-      "codekeeper:type-security",
-      "codekeeper:type-testing"
+      "codekeeper:risk-high"
     ],
     "maximumDiffBytes": 262144,
     "maximumChangedFiles": 500,
@@ -311,39 +371,25 @@
     "repair": {
       "enabled": true,
       "allowedPaths": [
-        "src/discount.mjs",
-        "test/discount.test.mjs"
+        "**"
       ],
       "protectedPaths": [
-        ".github/**",
+        ".github/actions/**",
+        ".github/codekeeper.json",
+        ".github/codekeeper/**",
+        ".github/workflows/**",
         ".codex/**",
         ".claude/**",
         "**/AGENTS.md",
         "**/CLAUDE.md",
-        "**/SECURITY.md",
-        "**/CODEOWNERS",
-        ".gitattributes",
-        ".gitmodules",
-        "LICENSE",
-        "LICENSE.*",
         "tools/codekeeper/**",
-        "**/*.xcodeproj/**",
-        "**/*.xcworkspace/**",
-        "**/*.entitlements",
-        "**/*Info.plist",
-        "**/*Signing*",
-        "**/*signing*",
-        "**/*Migration*",
-        "**/*migration*",
-        "**/*Security*",
-        "**/*security*",
-        "Package.resolved"
+        "packages/codekeeper/**"
       ],
       "allowAdd": true,
-      "maximumFiles": 8,
-      "maximumChangedLines": 500,
-      "maximumPatchBytes": 524288,
-      "maximumFileBytes": 262144,
+      "maximumFiles": 50,
+      "maximumChangedLines": 5000,
+      "maximumPatchBytes": 5242880,
+      "maximumFileBytes": 1048576,
       "validationCommands": [
         "git diff --check",
         "node --test test/*.test.mjs",
@@ -357,6 +403,22 @@
     "closeResolvedIssues": true,
     "maximumOpenIssueContext": 50,
     "managedLabels": [
+      "automated maintenance",
+      "ready for fix",
+      "review needed",
+      "possible duplicate",
+      "deferred",
+      "needs information",
+      "needs tests",
+      "urgent",
+      "high priority",
+      "bug",
+      "enhancement",
+      "documentation",
+      "question",
+      "maintenance",
+      "security",
+      "testing",
       "codekeeper:maintenance",
       "codekeeper:ready",
       "codekeeper:manual-review",
@@ -375,8 +437,7 @@
       "codekeeper:type-maintenance",
       "codekeeper:type-question",
       "codekeeper:type-security",
-      "codekeeper:type-testing",
-      "codekeeper:needs-tests"
+      "codekeeper:type-testing"
     ]
   },
   "merge": {
