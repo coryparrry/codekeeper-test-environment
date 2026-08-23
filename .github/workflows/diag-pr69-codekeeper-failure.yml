@@ -78,3 +78,5 @@ jobs:
           git add diag/pr69-codekeeper-failure.txt
           git commit -m 'chore(ci): refresh PR 69 Codekeeper diagnostic' || true
           git push origin HEAD:diag/pr69-codekeeper-failure
+
+# Refreshed after installing Codekeeper 0.4.10 and reopening PR #69.
