@@ -1,0 +1,7 @@
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Local-only working notes; never part of the published tree
+BENCHMARK_NOTES.md
+*.local.md
