@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "package": {
+    "name": "@coryparry/codekeeper",
+    "version": "0.4.10",
+    "integrity": "sha512-4A9SskfAAPxJJsd7wBUSFfcaMDYoxlnXAh/w5MvbchiCQJCyeVrGcGeJXuAoXusurF1Mrzyen2gkRZrtQqczjw=="
+  },
+  "source": {
+    "repository": "coryparrry/Codekeeper",
+    "commit": "884e380ee31f4dd595ec963f3a0197cdeaf40d68"
+  },
+  "managedFiles": {
+    ".github/workflows/codekeeper.yml": "514729e22f6b15cb0db028f5136fd168cb8873f716adbacf62974845d04428ff",
+    ".github/codekeeper/actions/acquire-package/action.yml": "62b1451952adf82418e54a93cbe457314dfa1a228bc97eceb12de2a2d3fc14c6",
+    ".github/workflows/codekeeper-runtime.yml": "da53e5595df2ecd5fde6365beebea7845a41f9c6978e4cadd75fbf59a6e67bad",
+    ".github/codekeeper/README.md": "ba6502612135abf06646bb99179553658dec1464b89b9fa0a7bd7ddd944dc3e5"
+  }
+}
