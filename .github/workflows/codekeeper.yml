@@ -21,6 +21,8 @@ on:
     types: [created]
   repository_dispatch:
     types: [codekeeper_review, codekeeper_issue, codekeeper_fix]
+  schedule:
+    - cron: "17 7 * * *"
   workflow_dispatch:
     inputs:
       dry_run:
