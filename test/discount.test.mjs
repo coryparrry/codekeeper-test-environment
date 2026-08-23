@@ -21,6 +21,12 @@ test("discountedTotal calculates a deterministic percentage discount", () => {
   assert.equal(discountedTotal(19.99, 25), 14.99);
 });
 
+test("discountedTotal preserves a finite discounted total when cents scaling overflows", () => {
+  const result = discountedTotal(Number.MAX_VALUE, 1);
+  assert.equal(Number.isFinite(result), true);
+  assert.equal(result, Number.MAX_VALUE * 0.99);
+});
+
 test("discountedTotal accepts a full discount", () => {
   assert.equal(discountedTotal(19.99, 100), 0);
 });
