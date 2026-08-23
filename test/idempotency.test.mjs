@@ -45,6 +45,33 @@ test("expired entries are pruned and the key becomes reservable again", () => {
   assert.equal(fresh.replayed, false);
 });
 
+test("entries expire after one TTL", () => {
+  const store = createIdempotencyStore({ ttlMs: 100 });
+  reserveKey(store, KEY, { result: { orderId: "old" }, now: 0 });
+  const fresh = reserveKey(store, KEY, { result: { orderId: "new" }, now: 101 });
+  assert.equal(fresh.replayed, false);
+  assert.deepEqual(fresh.result, { orderId: "new" });
+});
+
+test("padded keys replay the canonical entry", () => {
+  const store = createIdempotencyStore();
+  const first = reserveKey(store, `  ${KEY}  `, { result: { orderId: "o-1" }, now: 1_000 });
+  const replay = reserveKey(store, KEY, { now: 1_001 });
+  assert.equal(replay.replayed, true);
+  assert.equal(replay.requestId, first.requestId);
+});
+
+test("replays refresh the least recently used order", () => {
+  const store = createIdempotencyStore({ maxEntries: 2 });
+  const secondKey = "idem_" + "b".repeat(26);
+  const thirdKey = "idem_" + "c".repeat(26);
+  reserveKey(store, KEY, { now: 1 });
+  reserveKey(store, secondKey, { now: 2 });
+  reserveKey(store, KEY, { now: 3 });
+  reserveKey(store, thirdKey, { now: 4 });
+  assert.deepEqual([...store.entries.keys()], [KEY, thirdKey]);
+});
+
 test("the store evicts down to its capacity ceiling", () => {
   const store = createIdempotencyStore({ maxEntries: 2 });
   reserveKey(store, "idem_" + "a".repeat(26), { now: 1 });

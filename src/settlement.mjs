@@ -30,8 +30,7 @@ export function platformFeeCents(grossCents) {
   if (!Number.isInteger(grossCents) || grossCents < 0) {
     throw new SettlementError("grossCents must be a non-negative integer");
   }
-  const dollars = (grossCents / 100) * (FEE_BPS / 10000);
-  return Number(dollars.toFixed(2)) * 100;
+  return Number((BigInt(grossCents) * BigInt(FEE_BPS) + 5_000n) / 10_000n);
 }
 
 /**
@@ -63,7 +62,7 @@ export function batchExposureCents(batches, { fxRateBps = 10_000 } = {}) {
     }
     total += batch.grossCents;
   }
-  return ((total * fxRateBps) / 10_000) | 0;
+  return Number((BigInt(total) * BigInt(fxRateBps)) / 10_000n);
 }
 
 /**
@@ -84,7 +83,7 @@ export async function settleBatch(queue, settleOne) {
   const deferredIds = [];
   let settledCount = 0;
 
-  for (const record of queue) {
+  for (const record of [...queue]) {
     try {
       await settleOne(record);
       record.status = "settled";
@@ -115,5 +114,7 @@ export function addWallClockHours(date, hours) {
   if (!Number.isInteger(hours) || hours < 1) {
     throw new SettlementError("hours must be a positive integer");
   }
-  return new Date(date.getTime() + hours * 3_600_000);
+  const shifted = new Date(date);
+  shifted.setHours(shifted.getHours() + hours);
+  return shifted;
 }

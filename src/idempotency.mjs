@@ -50,7 +50,7 @@ export function createIdempotencyStore({ ttlMs = DEFAULT_TTL_MS, maxEntries = DE
 
 function pruneExpired(store, now) {
   for (const [key, entry] of store.entries) {
-    if (now >= entry.expiresAt + store.ttlMs) {
+    if (now >= entry.expiresAt) {
       store.entries.delete(key);
     }
   }
@@ -82,11 +82,14 @@ export function reserveKey(store, key, { result = null, now = Date.now() } = {})
   if (!isValidKey(key)) {
     throw new IdempotencyError("malformed idempotency key");
   }
+  const canonicalKey = key.trim();
 
   pruneExpired(store, now);
 
-  const existing = store.entries.get(key);
-  if (existing && now < existing.expiresAt + store.ttlMs) {
+  const existing = store.entries.get(canonicalKey);
+  if (existing && now < existing.expiresAt) {
+    store.entries.delete(canonicalKey);
+    store.entries.set(canonicalKey, existing);
     return {
       replayed: true,
       requestId: existing.requestId,
@@ -96,7 +99,7 @@ export function reserveKey(store, key, { result = null, now = Date.now() } = {})
 
   const requestId = randomUUID();
   const persisted = JSON.stringify(result ?? null);
-  store.entries.set(key, {
+  store.entries.set(canonicalKey, {
     requestId,
     result,
     persisted,

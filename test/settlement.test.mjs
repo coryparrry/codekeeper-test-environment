@@ -17,6 +17,11 @@ test("platformFeeCents applies the 2.90% rate", () => {
   assert.equal(platformFeeCents(0), 0);
 });
 
+test("platformFeeCents rounds half-up to integer cents", () => {
+  assert.equal(platformFeeCents(225), 7);
+  assert.equal(platformFeeCents(1_500), 44);
+});
+
 test("netPayoutCents subtracts the fee", () => {
   assert.equal(netPayoutCents(10_000), 9_710);
 });
@@ -38,6 +43,10 @@ test("batchExposureCents sums batches at the default rate", () => {
 test("batchExposureCents converts with basis-point FX rates", () => {
   const exposure = batchExposureCents([{ grossCents: 200_00 }], { fxRateBps: 13_000 });
   assert.equal(exposure, 26_000);
+});
+
+test("batchExposureCents preserves large positive exposures", () => {
+  assert.equal(batchExposureCents([{ grossCents: 3_000_000_000 }]), 3_000_000_000);
 });
 
 test("batchExposureCents validates inputs", () => {
@@ -75,6 +84,17 @@ test("settleBatch defers records rejected by the processor", async () => {
   assert.equal(queue[0].id, "p-1");
 });
 
+test("settleBatch processes records after a middle rejection", async () => {
+  const queue = [{ id: "p-1" }, { id: "p-2" }, { id: "p-3" }];
+  const report = await settleBatch(queue, async (record) => {
+    if (record.id === "p-2") throw new Error("processor down");
+  });
+  assert.equal(report.settledCount, 2);
+  assert.deepEqual(report.deferredIds, ["p-2"]);
+  assert.deepEqual(queue.map((record) => record.id), ["p-1", "p-3"]);
+  assert.deepEqual(queue.map((record) => record.status), ["settled", "settled"]);
+});
+
 test("settleBatch validates its arguments", async () => {
   await assert.rejects(() => settleBatch("nope", async () => {}), SettlementError);
 });
@@ -84,6 +104,19 @@ test("addWallClockHours keeps the time of day on ordinary days", () => {
   assert.equal(shifted.getDate(), 15);
   assert.equal(shifted.getHours(), 14);
   assert.equal(shifted.getMinutes(), 30);
+});
+
+test("addWallClockHours keeps local time across DST fallback", () => {
+  const previousTZ = process.env.TZ;
+  process.env.TZ = "America/New_York";
+  try {
+    const shifted = addWallClockHours(new Date(2026, 10, 1, 0, 30), 2);
+    assert.equal(shifted.getHours(), 2);
+    assert.equal(shifted.getMinutes(), 30);
+  } finally {
+    if (previousTZ === undefined) delete process.env.TZ;
+    else process.env.TZ = previousTZ;
+  }
 });
 
 test("addWallClockHours validates its arguments", () => {
