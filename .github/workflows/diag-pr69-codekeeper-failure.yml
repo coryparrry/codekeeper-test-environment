@@ -1,0 +1,80 @@
+name: Diagnose PR 69 Codekeeper failure
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/diag-pr69-codekeeper-failure.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: diag/pr69-codekeeper-failure
+          persist-credentials: true
+      - name: Capture the failed Codekeeper run and logs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          mkdir -p diag
+          python3 <<'PY'
+          import json, os, urllib.request
+
+          token = os.environ['GH_TOKEN']
+          repo = os.environ['REPO']
+          headers = {
+              'Accept': 'application/vnd.github+json',
+              'Authorization': f'Bearer {token}',
+              'X-GitHub-Api-Version': '2022-11-28',
+          }
+
+          def request(url):
+              req = urllib.request.Request(url, headers=headers)
+              with urllib.request.urlopen(req) as response:
+                  return response.read()
+
+          runs = json.loads(request(f'https://api.github.com/repos/{repo}/actions/runs?event=pull_request_target&per_page=50'))
+          candidates = []
+          for run in runs.get('workflow_runs', []):
+              if run.get('name') == 'Codekeeper' and run.get('created_at', '') >= '2026-08-23T08:50:00Z':
+                  candidates.append(run)
+
+          lines = ['PR #69 Codekeeper diagnostic', '']
+          if not candidates:
+              lines.append('No matching Codekeeper pull_request_target run found.')
+          for run in candidates:
+              lines.extend([
+                  f"RUN {run['id']}",
+                  f"title={run.get('display_title')}",
+                  f"status={run.get('status')} conclusion={run.get('conclusion')}",
+                  f"head_sha={run.get('head_sha')} event={run.get('event')}",
+                  f"created_at={run.get('created_at')} updated_at={run.get('updated_at')}",
+              ])
+              jobs = json.loads(request(run['jobs_url']))
+              for job in jobs.get('jobs', []):
+                  lines.append(f"JOB {job['id']} {job.get('name')} status={job.get('status')} conclusion={job.get('conclusion')}")
+                  for step in job.get('steps') or []:
+                      lines.append(f"  STEP {step.get('number')} {step.get('name')} status={step.get('status')} conclusion={step.get('conclusion')}")
+                  if job.get('conclusion') == 'failure':
+                      try:
+                          log = request(f"https://api.github.com/repos/{repo}/actions/jobs/{job['id']}/logs").decode('utf-8', 'replace')
+                      except Exception as exc:
+                          log = f'<log fetch failed: {exc}>'
+                      lines.extend(['--- FAILED JOB LOG ---', log[-50000:], '--- END FAILED JOB LOG ---'])
+              lines.append('')
+
+          open('diag/pr69-codekeeper-failure.txt', 'w').write('\n'.join(lines))
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add diag/pr69-codekeeper-failure.txt
+          git commit -m 'chore(ci): capture PR 69 Codekeeper failure'
+          git push origin HEAD:diag/pr69-codekeeper-failure
