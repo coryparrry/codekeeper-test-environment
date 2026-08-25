@@ -45,6 +45,14 @@ test("batchExposureCents converts with basis-point FX rates", () => {
   assert.equal(exposure, 26_000);
 });
 
+test("batchExposureCents rounds fractional cents up for the treasury guardrail", () => {
+  const exposure = batchExposureCents(
+    [{ grossCents: 4_999_501 }],
+    { fxRateBps: 10_001 },
+  );
+  assert.equal(exposure, MAX_BATCH_EXPOSURE_CENTS + 1);
+});
+
 test("batchExposureCents preserves large positive exposures", () => {
   assert.equal(batchExposureCents([{ grossCents: 3_000_000_000 }]), 3_000_000_000);
 });
@@ -97,6 +105,40 @@ test("settleBatch processes records after a middle rejection", async () => {
 
 test("settleBatch validates its arguments", async () => {
   await assert.rejects(() => settleBatch("nope", async () => {}), SettlementError);
+});
+
+test("settleBatch rejects an invalid processor without changing the queue", async () => {
+  const queue = [{ id: "p-1" }, { id: "p-2" }];
+  await assert.rejects(() => settleBatch(queue, undefined), SettlementError);
+  assert.deepEqual(queue, [{ id: "p-1" }, { id: "p-2" }]);
+});
+
+test("settleBatch does not submit a record twice during overlapping runs", async () => {
+  const queue = [{ id: "p-1" }];
+  let calls = 0;
+  let release;
+  const gate = new Promise((resolve) => {
+    release = resolve;
+  });
+  const settleOne = async () => {
+    calls += 1;
+    await gate;
+  };
+
+  const first = settleBatch(queue, settleOne);
+  await Promise.resolve();
+  const second = settleBatch(queue, settleOne);
+  await Promise.resolve();
+
+  assert.equal(calls, 1);
+  release();
+  const reports = await Promise.all([first, second]);
+  assert.equal(calls, 1);
+  assert.deepEqual(reports, [
+    { settledCount: 1, deferredIds: [] },
+    { settledCount: 0, deferredIds: [] },
+  ]);
+  assert.deepEqual(queue, [{ id: "p-1", status: "settled" }]);
 });
 
 test("addWallClockHours keeps the time of day on ordinary days", () => {

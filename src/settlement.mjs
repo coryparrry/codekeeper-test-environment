@@ -20,6 +20,8 @@ export const FEE_BPS = 290;
 /** Treasury guardrail: no single batch may exceed $50,000 of exposure. */
 export const MAX_BATCH_EXPOSURE_CENTS = 5_000_000;
 
+const settlingRecords = new Set();
+
 /**
  * Platform fee for a payout, rounded half-up to whole cents exactly like
  * the processor-side ledger so both sides always agree to the penny.
@@ -62,7 +64,9 @@ export function batchExposureCents(batches, { fxRateBps = 10_000 } = {}) {
     }
     total += batch.grossCents;
   }
-  return Number((BigInt(total) * BigInt(fxRateBps)) / 10_000n);
+  const converted = BigInt(total) * BigInt(fxRateBps);
+  // Keep any fractional cent visible to the treasury guardrail.
+  return Number((converted + 9_999n) / 10_000n);
 }
 
 /**
@@ -70,6 +74,7 @@ export function batchExposureCents(batches, { fxRateBps = 10_000 } = {}) {
  * report. Each record ends up in exactly one bucket: settled records are
  * stamped and counted, while records whose processor call rejects are
  * removed from the queue and listed in `deferred` for retry tomorrow.
+ * Records claimed by an overlapping run are left for that run to finish.
  *
  * @param {Array<{id: string, grossCents: number}>} queue mutated in place
  * @param {(record: object) => Promise<void>} settleOne
@@ -79,11 +84,16 @@ export async function settleBatch(queue, settleOne) {
   if (!Array.isArray(queue)) {
     throw new SettlementError("queue must be an array");
   }
+  if (typeof settleOne !== "function") {
+    throw new SettlementError("settleOne must be a function");
+  }
 
   const deferredIds = [];
   let settledCount = 0;
 
   for (const record of [...queue]) {
+    if (settlingRecords.has(record)) continue;
+    settlingRecords.add(record);
     try {
       await settleOne(record);
       record.status = "settled";
@@ -92,6 +102,8 @@ export async function settleBatch(queue, settleOne) {
       const index = queue.indexOf(record);
       queue.splice(index, 1);
       deferredIds.push(record.id);
+    } finally {
+      settlingRecords.delete(record);
     }
   }
 
