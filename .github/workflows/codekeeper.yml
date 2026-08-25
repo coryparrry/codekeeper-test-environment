@@ -80,8 +80,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: review
-      package_version: "0.5.1"
-      package_integrity: "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
+      package_version: "0.5.3"
+      package_integrity: "sha512-vlpVvGWQOdLOAYTiPbHMAUQOPycnoAAM/P9EhNFMDtFHrQmyUoSUoJqz8cCbEZ2APkUB5Jw4mQF1I9K89c+LUg=="
       installed_modes: "review,maintain,issues,fix"
       enabled: >-
         ${{
@@ -139,8 +139,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: issues
-      package_version: "0.5.1"
-      package_integrity: "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
+      package_version: "0.5.3"
+      package_integrity: "sha512-vlpVvGWQOdLOAYTiPbHMAUQOPycnoAAM/P9EhNFMDtFHrQmyUoSUoJqz8cCbEZ2APkUB5Jw4mQF1I9K89c+LUg=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: false
@@ -173,8 +173,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: fix
-      package_version: "0.5.1"
-      package_integrity: "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
+      package_version: "0.5.3"
+      package_integrity: "sha512-vlpVvGWQOdLOAYTiPbHMAUQOPycnoAAM/P9EhNFMDtFHrQmyUoSUoJqz8cCbEZ2APkUB5Jw4mQF1I9K89c+LUg=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
@@ -198,8 +198,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: maintain
-      package_version: "0.5.1"
-      package_integrity: "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
+      package_version: "0.5.3"
+      package_integrity: "sha512-vlpVvGWQOdLOAYTiPbHMAUQOPycnoAAM/P9EhNFMDtFHrQmyUoSUoJqz8cCbEZ2APkUB5Jw4mQF1I9K89c+LUg=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: ${{ github.event_name == 'schedule' || inputs.dry_run }}
@@ -233,8 +233,8 @@ jobs:
     uses: ./.github/workflows/codekeeper-runtime.yml
     with:
       mode: auto
-      package_version: "0.5.1"
-      package_integrity: "sha512-N1nCwWvhAp0JBdUrSa5sBf4Tv2f1xInlP1SwrokN0Dyk4g+B0GwGoanhvYhWAvh5PNcINRMLnkj+hBtQ/JeF5g=="
+      package_version: "0.5.3"
+      package_integrity: "sha512-vlpVvGWQOdLOAYTiPbHMAUQOPycnoAAM/P9EhNFMDtFHrQmyUoSUoJqz8cCbEZ2APkUB5Jw4mQF1I9K89c+LUg=="
       installed_modes: "review,maintain,issues,fix"
       enabled: true
       dry_run: false
