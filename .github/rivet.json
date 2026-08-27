@@ -7,7 +7,7 @@
     "maximumFindings": 8
   },
   "repair": {
-    "authority": "never"
+    "authority": "owner"
   },
   "issues": {
     "triage": "disabled",
