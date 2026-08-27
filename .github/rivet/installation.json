@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "product": "Rivet",
+  "mode": "review",
+  "compiler": {
+    "version": "0.86.2",
+    "commit": "48e5fa3ff52294d91d97715017a9f8693a48387f",
+    "actionsCommit": "6aab9e5b5c91c615506061f09bedd81a23babe3c"
+  },
+  "managedFiles": [
+    ".github/rivet.json",
+    ".github/rivet/actions/authority-receipt/action.yml",
+    ".github/rivet/actions/authority-receipt/index.mjs",
+    ".github/rivet/aw/review-extension.md",
+    ".github/rivet/installation.json",
+    ".github/workflows/rivet-review.lock.yml",
+    ".github/workflows/rivet-review.md"
+  ]
+}
