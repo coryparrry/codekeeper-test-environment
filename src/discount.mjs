@@ -1,5 +1,5 @@
 export function isValidDiscountPercent(percent) {
-  return Number.isFinite(percent) && percent >= 0 && percent <= 100;
+  return Number.isFinite(percent) && percent >= 0;
 }
 
 export function discountedTotal(price, percent) {
