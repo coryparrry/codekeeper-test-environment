@@ -36,6 +36,8 @@
     ".github/rivet/actions/publish-repair/index.mjs",
     ".github/rivet/actions/validate-repair/action.yml",
     ".github/rivet/actions/validate-repair/index.mjs",
+    ".github/rivet/agents/fixer.md",
+    ".github/rivet/agents/pr-reviewer.md",
     ".github/rivet/aw/review-extension.md",
     ".github/rivet/installation.json",
     ".github/workflows/rivet-repair.lock.yml",
