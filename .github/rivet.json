@@ -14,7 +14,7 @@
     "implementation": "disabled"
   },
   "maintenance": {
-    "mode": "disabled"
+    "mode": "manual"
   },
   "merge": {
     "authority": "never"
