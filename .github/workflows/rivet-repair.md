@@ -13,6 +13,9 @@ checkout:
   fetch-depth: 0
 engine: codex
 model: gpt-5.6-luna
+inlined-imports: true
+imports:
+  - .github/rivet/agents/fixer.md
 safe-outputs:
   max-patch-files: 25
   report-failure-as-issue: false
