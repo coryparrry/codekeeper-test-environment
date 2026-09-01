@@ -8,7 +8,7 @@
     "Review may publish up to 8 inline findings.",
     "Review may comment but cannot request changes.",
     "Repair requires an owner action.",
-    "Issue triage is disabled.",
+    "Issue triage is automatic.",
     "Issue implementation is disabled.",
     "Maintenance is disabled.",
     "Merge is impossible."
@@ -19,7 +19,8 @@
     "permissions": {
       "contents": "write",
       "metadata": "read",
-      "pullRequests": "write"
+      "pullRequests": "write",
+      "issues": "write"
     },
     "events": []
   },
@@ -32,6 +33,8 @@
     ".github/rivet.json",
     ".github/rivet/actions/authority-receipt/action.yml",
     ".github/rivet/actions/authority-receipt/index.mjs",
+    ".github/rivet/actions/prepare-issue-context/action.yml",
+    ".github/rivet/actions/prepare-issue-context/index.mjs",
     ".github/rivet/actions/prepare-review-context/action.yml",
     ".github/rivet/actions/prepare-review-context/index.mjs",
     ".github/rivet/actions/publish-repair/action.yml",
@@ -39,9 +42,12 @@
     ".github/rivet/actions/validate-repair/action.yml",
     ".github/rivet/actions/validate-repair/index.mjs",
     ".github/rivet/agents/fixer.md",
+    ".github/rivet/agents/issue-triager.md",
     ".github/rivet/agents/pr-reviewer.md",
     ".github/rivet/aw/review-extension.md",
     ".github/rivet/installation.json",
+    ".github/workflows/rivet-issue-triage.lock.yml",
+    ".github/workflows/rivet-issue-triage.md",
     ".github/workflows/rivet-repair.lock.yml",
     ".github/workflows/rivet-repair.md",
     ".github/workflows/rivet-review.lock.yml",
