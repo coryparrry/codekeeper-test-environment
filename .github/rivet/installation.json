@@ -32,6 +32,8 @@
     ".github/rivet.json",
     ".github/rivet/actions/authority-receipt/action.yml",
     ".github/rivet/actions/authority-receipt/index.mjs",
+    ".github/rivet/actions/prepare-review-context/action.yml",
+    ".github/rivet/actions/prepare-review-context/index.mjs",
     ".github/rivet/actions/publish-repair/action.yml",
     ".github/rivet/actions/publish-repair/index.mjs",
     ".github/rivet/actions/validate-repair/action.yml",

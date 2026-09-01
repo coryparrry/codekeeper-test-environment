@@ -4,15 +4,14 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened, ready_for_review]
   bots: ["${{ vars.RIVET_APP_BOT_LOGIN }}"]
+  needs: [review_context]
 permissions:
   contents: read
   pull-requests: read
-checkout:
-  sparse-checkout: |
-    .github/rivet/actions/authority-receipt
+checkout: false
 engine: codex
-model: gpt-5.6-luna
-max-turns: 6
+model: gpt-5.6-luna?effort=low
+max-turns: 3
 jobs:
   safe_outputs:
     if: needs.agent.result == 'success'
