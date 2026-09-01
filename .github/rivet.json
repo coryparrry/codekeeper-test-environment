@@ -10,7 +10,7 @@
     "authority": "owner"
   },
   "issues": {
-    "triage": "disabled",
+    "triage": "automatic",
     "implementation": "disabled"
   },
   "maintenance": {

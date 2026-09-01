@@ -31,6 +31,10 @@ safe-outputs:
     max: 8
   submit-pull-request-review:
     allowed-events: [COMMENT]
+  create-issue:
+    title-prefix: "[rivet] "
+    max: 1
+    deduplicate-by-title: true
 ---
 
 # Rivet pull request review
@@ -60,7 +64,7 @@ When the comparison supports a useful relationship among at least three componen
 End with `<details>`, `<summary><strong>Review details</strong></summary>`, the exact base and head SHAs, changed-file count, recommendation, and any compact non-blocking context, then `</details>`. Do not duplicate inline comment text in the review body.
 The reviewer profile's `block`, `manual`, or `auto` recommendation is evidence only and does not select the GitHub review event. Use only `COMMENT`; `REQUEST_CHANGES` is forbidden.
 
-Do not call `create_issue`; issue triage is disabled.
+Triage each supported finding before publication. Keep findings that should be fixed in this pull request as inline review comments. When one verified concern is outside this pull request or needs a separate owner decision, defer it by calling `create_issue` once. The issue must state the concrete evidence, why it is deferred, and the source pull request; it does not authorize a repair or implementation.
 
 When the change has no supported actionable finding, submit the same general review with a clean Findings result and a concise evidence-backed reason.
 
