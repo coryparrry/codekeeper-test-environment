@@ -168,10 +168,19 @@ export function inspectRepairPatch(patch) {
 }
 
 export function normalizeRepairPatch(patch) {
-  if (typeof patch !== "string" || patch.length < 1) {
+  if (
+    typeof patch !== "string" ||
+    Buffer.byteLength(patch) < 1 ||
+    Buffer.byteLength(patch) > MAX_PATCH_BYTES
+  ) {
     fail("patch is empty, oversized, or binary");
   }
-  return patch.endsWith("\n") ? patch : `${patch}\n`;
+  const normalized = patch.includes("\n")
+    ? patch
+    : patch.replace(/\\\\|\\n/g, (sequence) =>
+        sequence === "\\n" ? "\n" : "\\",
+      );
+  return normalized.endsWith("\n") ? normalized : `${normalized}\n`;
 }
 
 function reviewFingerprint(review, comments) {
