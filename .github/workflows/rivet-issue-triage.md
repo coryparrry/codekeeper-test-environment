@@ -45,7 +45,8 @@ tools:
   cli-proxy: false
   github:
     toolsets: [issues]
-    allowed-repos: "${{ github.repository }}"
+    allowed-repos:
+      - "${{ github.repository }}"
     min-integrity: none
     allowed:
       - name: issue_read
