@@ -51,3 +51,12 @@ test("discountBreakdown reports the price, discount, savings, and total", () => 
 test("discountBreakdown shares discountedTotal input validation", () => {
   assert.throws(() => discountBreakdown(-1, 25), TypeError);
 });
+
+test("discountBreakdown reports a full discount without negative zero", () => {
+  assert.deepEqual(discountBreakdown(19.99, 100), {
+    price: 19.99,
+    percent: 100,
+    savings: 19.99,
+    total: 0,
+  });
+});
