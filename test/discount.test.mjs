@@ -1,6 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { discountedTotal, isValidDiscountPercent } from "../src/discount.mjs";
+import {
+  discountBreakdown,
+  discountedTotal,
+  isValidDiscountPercent,
+} from "../src/discount.mjs";
 
 test("isValidDiscountPercent accepts the inclusive boundaries", () => {
   assert.equal(isValidDiscountPercent(0), true);
@@ -33,4 +37,17 @@ test("discountedTotal normalizes negative zero", () => {
 
 test("discountedTotal rejects an invalid discount", () => {
   assert.throws(() => discountedTotal(19.99, 101), TypeError);
+});
+
+test("discountBreakdown reports the price, discount, savings, and total", () => {
+  assert.deepEqual(discountBreakdown(19.99, 25), {
+    price: 19.99,
+    percent: 25,
+    savings: 5,
+    total: 14.99,
+  });
+});
+
+test("discountBreakdown shares discountedTotal input validation", () => {
+  assert.throws(() => discountBreakdown(-1, 25), TypeError);
 });

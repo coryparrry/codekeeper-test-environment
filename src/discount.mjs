@@ -9,3 +9,9 @@ export function discountedTotal(price, percent) {
   const total = Math.round(price * (1 - percent / 100) * 100) / 100;
   return total === 0 ? 0 : total;
 }
+
+export function discountBreakdown(price, percent) {
+  const total = discountedTotal(price, percent);
+  const savings = Math.round((price - total) * 100) / 100;
+  return { price, percent, savings, total };
+}
