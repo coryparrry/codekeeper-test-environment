@@ -34,3 +34,8 @@ test("discountedTotal normalizes negative zero", () => {
 test("discountedTotal rejects an invalid discount", () => {
   assert.throws(() => discountedTotal(19.99, 101), TypeError);
 });
+
+test("isValidDiscountPercent rejects infinite percentages", () => {
+  assert.equal(isValidDiscountPercent(Number.POSITIVE_INFINITY), false);
+  assert.equal(isValidDiscountPercent(Number.NEGATIVE_INFINITY), false);
+});
