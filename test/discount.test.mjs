@@ -17,6 +17,10 @@ test("discountedTotal leaves the price unchanged for a zero-percent discount", (
   assert.equal(discountedTotal(19.99, 0), 19.99);
 });
 
+test("discountedTotal rounds fractional cents to the nearest cent", () => {
+  assert.equal(discountedTotal(1.001, 0), 1);
+});
+
 test("discountedTotal calculates a deterministic percentage discount", () => {
   assert.equal(discountedTotal(19.99, 25), 14.99);
 });
