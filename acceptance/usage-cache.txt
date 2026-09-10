@@ -1,0 +1,3 @@
+Temporary review fixture.
+This text-only change exercises usage-history recovery and artifact storage.
+No application behavior changes.
