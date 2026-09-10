@@ -35,8 +35,21 @@ jobs:
           RIVET_APP_BOT_LOGIN: ${{ vars.RIVET_APP_BOT_LOGIN }}
   safe_outputs:
     if: needs.agent.result == 'success'
-engine: codex
+engine:
+  id: codex
+  env:
+    OPENAI_BASE_URL: "https://api.openai.com/v1"
+    CODEX_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 model: gpt-5.6-luna
+network:
+  allowed:
+    - defaults
+    - api.openai.com
+sandbox:
+  agent:
+    model-fallback: false
+    token-steering: false
 inlined-imports: true
 imports:
   - .github/rivet/agents/issue-triager.md
