@@ -9,21 +9,8 @@ permissions:
   contents: read
   pull-requests: read
 checkout: false
-engine:
-  id: codex
-  env:
-    OPENAI_BASE_URL: "https://api.openai.com/v1"
-    CODEX_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+engine: codex
 model: gpt-5.6-luna
-network:
-  allowed:
-    - defaults
-    - api.openai.com
-sandbox:
-  agent:
-    model-fallback: false
-    token-steering: false
 max-turns: 3
 jobs:
   review_tags_pending:

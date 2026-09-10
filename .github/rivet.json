@@ -23,11 +23,7 @@
     "review": {
       "engine": "codex",
       "model": "gpt-5.6-luna",
-      "effort": "default",
-      "endpoint": {
-        "baseUrl": "https://api.openai.com/v1",
-        "apiKeySecret": "OPENAI_API_KEY"
-      }
+      "effort": "default"
     }
   }
 }
