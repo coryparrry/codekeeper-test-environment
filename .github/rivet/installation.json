@@ -11,6 +11,7 @@
     "Issue triage is automatic.",
     "Issue implementation is disabled.",
     "Maintenance is disabled.",
+    "Model calls use https://api.openai.com/v1 with the OPENAI_API_KEY Actions secret.",
     "Merge is impossible."
   ],
   "githubApp": {

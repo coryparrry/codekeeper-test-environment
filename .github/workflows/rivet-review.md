@@ -9,8 +9,21 @@ permissions:
   contents: read
   pull-requests: read
 checkout: false
-engine: codex
+engine:
+  id: codex
+  env:
+    OPENAI_BASE_URL: "https://api.openai.com/v1"
+    CODEX_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+    OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
 model: gpt-5.6-luna
+network:
+  allowed:
+    - defaults
+    - api.openai.com
+sandbox:
+  agent:
+    model-fallback: false
+    token-steering: false
 max-turns: 3
 jobs:
   review_tags_pending:
@@ -18,6 +31,8 @@ jobs:
     if: needs.pre_activation.outputs.activated == 'true'
     runs-on: ubuntu-latest
     permissions: {}
+    outputs:
+      output: ${{ steps.pending-tags.outcome }}
     steps:
       - id: review-token
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1
@@ -27,7 +42,8 @@ jobs:
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
           permission-pull-requests: write
-      - uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+      - id: pending-tags
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
         with:
           github-token: ${{ steps.review-token.outputs.token }}
           script: |
@@ -117,6 +133,7 @@ jobs:
             if (JSON.stringify(finalManaged) !== JSON.stringify(["review needed"])) invalid();
   agent:
     needs: [review_tags_pending]
+    if: needs.review_context.outputs.snapshot != ''
   safe_outputs:
     if: needs.agent.result == 'success'
 inlined-imports: true
